@@ -68,11 +68,68 @@ struct OrderWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: OrderWidgetAttributes.self) { context in
             // Lock screen/banner UI
-            VStack {
-                Text("\(context.state.carPlate)")
+            // 上部區塊
+            VStack(spacing: 0) {
+                HStack {
+                    HStack(alignment: .bottom) {
+                        Text("\(context.state.carPlate)")
+                                        .font(.system(size: 18, weight: .bold))
+                    }
+                    
+                    Spacer()
+                    
+                    // 時間區塊
+                    if (context.state.isCharging()) {
+                        Text(
+                          Date(
+                            timeIntervalSinceNow: context.state.getChargingTimeSinceNow()
+                          ),
+                          style: .timer
+                        )
+                        .font(.system(size: 24, weight: .bold))
+                        .multilineTextAlignment(.trailing)
+                        .monospacedDigit()
+                    } else if (context.state.isParking()) {
+                        Text(
+                          Date(
+                            timeIntervalSinceNow: context.state.getParkingTimeSinceNow()
+                          ),
+                          style: .timer
+                        )
+                        .font(.system(size: 24, weight: .bold))
+                        .multilineTextAlignment(.trailing)
+                        .monospacedDigit()
+                    }
+                    
+                }
+                .padding(.top, 16)
+                .padding(.horizontal, 16)
             }
-            .activityBackgroundTint(Color.black)
-            .activitySystemActionForegroundColor(Color.white)
+            
+            Divider().background(Color(.white))
+            // 第二個區塊
+            VStack {
+                HStack {
+                    Text("預估費用 \(String(format: "%.0f", context.state.estimatedFee ?? 0))")
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 4) {
+                        Text("********")
+                            .foregroundColor(.secondary)
+                        Text("\(context.state.last4CardNumber)")
+                        if (context.state.isBindedPaymentMethod()) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                    }
+                    .font(.system(size: 16))
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -165,14 +222,28 @@ struct OrderWidgetLiveActivity: Widget {
                       .imageScale(.medium)
                       .foregroundColor(.green)
                       .symbolEffect(.pulse)
-                } else {
+                } else if (context.state.isParking()) {
                     Image(systemName: "parkingsign")
                       .imageScale(.medium)
                       .foregroundColor(.blue)
                       .symbolEffect(.pulse)
                 }
             } compactTrailing: {
-                Text("12:00")
+                if (context.state.isCharging()) {
+                    Text(
+                      Date(
+                        timeIntervalSinceNow: context.state.getChargingTimeSinceNow()
+                      ),
+                      style: .timer
+                    ).frame(maxWidth: 32)
+                } else if (context.state.isParking()) {
+                    Text(
+                      Date(
+                        timeIntervalSinceNow: context.state.getParkingTimeSinceNow()
+                      ),
+                      style: .timer
+                    ).frame(maxWidth: 32)
+                }
             } minimal: {
                 if (context.state.isCharging()) {
                     Image(systemName: "bolt.fill")
