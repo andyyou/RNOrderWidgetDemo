@@ -96,6 +96,7 @@ struct OrderWidgetLiveActivity: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
+                    // 上部區塊
                     VStack(spacing: 0) {
                         HStack {
                             HStack(alignment: .bottom) {
@@ -107,78 +108,33 @@ struct OrderWidgetLiveActivity: Widget {
                             
                             // 時間區塊
                             if (context.state.isCharging()) {
-                                HStack(alignment: .bottom) {
-                                    let date = Date(timeIntervalSinceNow: context.state.getChargingTimeSinceNow())
-                                    let hours = Calendar.current.component(.hour, from: date)
-                                    
-                                    if abs(hours) > 0 {
-                                        Text(date, style: .timer)
-                                            .font(.system(size: 24, weight: .bold))
-                                            .monospacedDigit()
-                                            .formatStyle(Date.FormatStyle().hour())
-                                        Text("hr")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text(date, style: .timer)
-                                            .font(.system(size: 24, weight: .bold))
-                                            .monospacedDigit()
-                                            .formatStyle(Date.FormatStyle().minute())
-                                        Text("min")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        Text(date, style: .timer)
-                                            .font(.system(size: 24, weight: .bold))
-                                            .monospacedDigit()
-                                            .formatStyle(Date.FormatStyle().minute())
-                                        Text("min")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text(date, style: .timer)
-                                            .font(.system(size: 24, weight: .bold))
-                                            .monospacedDigit()
-                                            .formatStyle(Date.FormatStyle().second())
-                                        Text("sec")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
+                                Text(
+                                  Date(
+                                    timeIntervalSinceNow: context.state.getChargingTimeSinceNow()
+                                  ),
+                                  style: .timer
+                                )
+                                .font(.system(size: 24, weight: .bold))
+                                .multilineTextAlignment(.trailing)
+                                .monospacedDigit()
                             } else if (context.state.isParking()) {
-                                HStack(alignment: .bottom) {
-                                    let time = context.state.getFormattedParkingTime()
-                                    let isShowHour = Int(time.hours) ?? 0 > 0
-                                    
-                                    if isShowHour {
-                                        Text(time.hours)
-                                            .font(.system(size: 24, weight: .bold))
-                                        Text("hr")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text(time.minutes)
-                                            .font(.system(size: 24, weight: .bold))
-                                        Text("min")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                    } else {
-                                        Text(time.minutes)
-                                            .font(.system(size: 24, weight: .bold))
-                                        Text("min")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                        Text(time.seconds)
-                                            .font(.system(size: 24, weight: .bold))
-                                        Text("sec")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                
+                                Text(
+                                  Date(
+                                    timeIntervalSinceNow: context.state.getParkingTimeSinceNow()
+                                  ),
+                                  style: .timer
+                                )
+                                .font(.system(size: 24, weight: .bold))
+                                .multilineTextAlignment(.trailing)
+                                .monospacedDigit()
                             }
                             
                         }
                         .padding(.top, 16)
                         .padding(.horizontal, 16)
                     }
+                    
+                    Divider().background(Color(.white))
                     // 第二個區塊
                     VStack {
                         HStack {
@@ -202,11 +158,6 @@ struct OrderWidgetLiveActivity: Widget {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        Color(.systemGray5)
-                        .edgesIgnoringSafeArea(.bottom)
-                    )
                 }
             } compactLeading: {
                 if (context.state.isCharging()) {
@@ -240,6 +191,7 @@ struct OrderWidgetLiveActivity: Widget {
         }
     }
 }
+
 
 extension OrderWidgetAttributes {
     fileprivate static var preview: OrderWidgetAttributes {
