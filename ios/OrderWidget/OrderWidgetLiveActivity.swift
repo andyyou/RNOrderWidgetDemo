@@ -27,7 +27,8 @@ struct OrderWidgetAttributes: ActivityAttributes {
         }
         
         func isBindedPaymentMethod() -> Bool {
-            return paymentMethod != nil
+            guard let method = paymentMethod else { return false }
+            return !method.isEmpty
         }
         
         func getParkingTimeSinceNow() -> TimeInterval {
@@ -73,7 +74,7 @@ struct OrderWidgetLiveActivity: Widget {
                 HStack {
                     HStack(alignment: .bottom) {
                         Text("\(context.state.carPlate)")
-                                        .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 18, weight: .bold))
                     }
                     
                     Spacer()
@@ -208,6 +209,16 @@ struct OrderWidgetLiveActivity: Widget {
                                 if (context.state.isBindedPaymentMethod()) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
+                                } else {
+                                    Text("已失效")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(
+                                            Capsule()
+                                                .fill(Color.red)
+                                        )
                                 }
                             }
                             .font(.system(size: 16))
@@ -222,11 +233,13 @@ struct OrderWidgetLiveActivity: Widget {
                       .imageScale(.medium)
                       .foregroundColor(.green)
                       .symbolEffect(.pulse)
+                      .padding(.leading, 4)
                 } else if (context.state.isParking()) {
                     Image(systemName: "parkingsign")
                       .imageScale(.medium)
                       .foregroundColor(.blue)
                       .symbolEffect(.pulse)
+                      .padding(.leading, 4)
                 }
             } compactTrailing: {
                 if (context.state.isCharging()) {
@@ -235,14 +248,14 @@ struct OrderWidgetLiveActivity: Widget {
                         timeIntervalSinceNow: context.state.getChargingTimeSinceNow()
                       ),
                       style: .timer
-                    ).frame(maxWidth: 32)
+                    ).frame(maxWidth: 52)
                 } else if (context.state.isParking()) {
                     Text(
                       Date(
                         timeIntervalSinceNow: context.state.getParkingTimeSinceNow()
                       ),
                       style: .timer
-                    ).frame(maxWidth: 32)
+                    ).frame(maxWidth: 52)
                 }
             } minimal: {
                 if (context.state.isCharging()) {

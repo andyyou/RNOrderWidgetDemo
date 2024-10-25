@@ -56,7 +56,7 @@ class OrderWidgetModule: NSObject {
     
   }
   
-  @objc
+  @objc(stopActivity)
   func stopLiveActivity() -> Void {
     Task {
       for activity in Activity<OrderWidgetAttributes>.activities {
@@ -65,8 +65,43 @@ class OrderWidgetModule: NSObject {
     }
   }
   
-  @objc
-  func updateState() -> Void {
-    //
+  @objc(updateState:)
+  func updateState(state: NSDictionary) -> Void {
+    var tmp = currentActivity?.content.state ?? OrderWidgetAttributes.ContentState()
+    
+    if let carPlate = state["carPlate"] as? String {
+      tmp.carPlate = carPlate
+    }
+    
+    if let last4CardNumber = state["last4CardNumber"] as? String {
+      tmp.last4CardNumber = last4CardNumber
+    }
+    
+    if let paymentMethod = state["paymentMethod"] as? String {
+        tmp.paymentMethod = paymentMethod
+    }
+    
+    if let estimatedFee = state["estimatedFee"] as? Double {
+      tmp.estimatedFee = estimatedFee
+    }
+    
+    if let parkedAt = state["parkedAt"] as? TimeInterval {
+      tmp.parkedAt = parseDate(parkedAt)
+    }
+    
+    if let chargedAt = state["chargedAt"] as? TimeInterval {
+      tmp.chargedAt = parseDate(chargedAt)
+    }
+    
+    let contentState = tmp
+        
+    Task {
+      await currentActivity?.update(
+        ActivityContent<OrderWidgetAttributes.ContentState>(
+          state: contentState,
+          staleDate: nil
+        )
+      )
+    }
   }
 }

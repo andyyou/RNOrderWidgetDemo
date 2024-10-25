@@ -14,6 +14,6 @@
 
 RCT_EXTERN_METHOD(startActivity:(NSDictionary *)params)
 RCT_EXTERN_METHOD(stopLiveActivity)
-RCT_EXTERN_METHOD(updateState)
+RCT_EXTERN_METHOD(updateState:(NSDictionary *)state)
 
 @end
