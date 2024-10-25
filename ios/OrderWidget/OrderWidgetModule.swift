@@ -12,30 +12,46 @@ import ActivityKit
 class OrderWidgetModule: NSObject {
   private var currentActivity: Activity<OrderWidgetAttributes>?
   
+  private func parseDate(_ timestamp: Any?) -> Date? {
+    if let timeInterval = timestamp as? Double {
+        return Date(timeIntervalSince1970: timeInterval / 1000)
+    }
+    return nil
+  }
+  
   private func areActivitiesEnabled() -> Bool {
     return ActivityAuthorizationInfo().areActivitiesEnabled
   }
   
-  @objc
-  func startLiveActivity() -> Void {
+  @objc(startActivity:)
+  func startLiveActivity(params: NSDictionary) -> Void {
     if (!areActivitiesEnabled()) {
       return
     }
+    let carPlate = (params["carPlate"] as? String) ?? "無車牌"
+    let last4CardNumber = (params["last4CardNumber"] as? String) ?? ""
+    let paymentMethod = params["paymentMethod"] as? String
+    guard let estimatedFee = params["estimatedFee"] as? Double else {
+      return
+    }
+    
+    let parkedAt = parseDate(params["parkedAt"])
+    let chargedAt = parseDate(params["chargedAt"])
     
     let activityAttributes = OrderWidgetAttributes()
     let contentState = OrderWidgetAttributes.ContentState(
-      parkedAt: Date(),
-      chargedAt: nil,
-      estimatedFee: 299,
-      last4CardNumber: "1234",
-      carPlate: "BEN-2992",
-      paymentMethod: "card"
+      parkedAt: parkedAt,
+      chargedAt: chargedAt,
+      estimatedFee: estimatedFee,
+      last4CardNumber: last4CardNumber,
+      carPlate: carPlate,
+      paymentMethod: paymentMethod
     )
     let activityContent = ActivityContent(state: contentState,  staleDate: nil)
     do {
       currentActivity = try Activity.request(attributes: activityAttributes, content: activityContent)
     } catch {
-      //
+      return
     }
     
   }

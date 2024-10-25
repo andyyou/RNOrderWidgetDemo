@@ -25,7 +25,16 @@ function App(): React.JSX.Element {
         <View style={styles.row}>
           <Button
             title="開始"
-            onPress={() => OrderWidgetModule.startLiveActivity()}
+            onPress={() =>
+              OrderWidgetModule.startActivity({
+                estimatedFee: 299,
+                carPlate: 'REN-8765', // 可選
+                last4CardNumber: '1234', // 可選
+                paymentMethod: 'card', // 可選
+                parkedAt: new Date().getTime(),
+                chargedAt: null,
+              })
+            }
           />
           <Button
             title="停止"

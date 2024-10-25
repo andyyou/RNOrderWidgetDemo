@@ -12,7 +12,7 @@
   return NO;
 }
 
-RCT_EXTERN_METHOD(startLiveActivity)
+RCT_EXTERN_METHOD(startActivity:(NSDictionary *)params)
 RCT_EXTERN_METHOD(stopLiveActivity)
 RCT_EXTERN_METHOD(updateState)
 
