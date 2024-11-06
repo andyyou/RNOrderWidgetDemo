@@ -23,11 +23,15 @@ class OrderWidgetModule: NSObject {
     return ActivityAuthorizationInfo().areActivitiesEnabled
   }
   
-  @objc(startActivity:)
+  @objc(startLiveActivity:)
   func startLiveActivity(params: NSDictionary) -> Void {
+    print("Start live activity called")
+    
     if (!areActivitiesEnabled()) {
+      print("Live activitity not enabled")
       return
     }
+    
     let carPlate = (params["carPlate"] as? String) ?? "無車牌"
     let last4CardNumber = (params["last4CardNumber"] as? String) ?? ""
     let paymentMethod = params["paymentMethod"] as? String
@@ -50,14 +54,16 @@ class OrderWidgetModule: NSObject {
     let activityContent = ActivityContent(state: contentState,  staleDate: nil)
     do {
       currentActivity = try Activity.request(attributes: activityAttributes, content: activityContent)
+      print("Live activitity started")
     } catch {
       return
     }
     
   }
   
-  @objc(stopActivity)
+  @objc(stopLiveActivity)
   func stopLiveActivity() -> Void {
+    print("Stop live activity called")
     Task {
       for activity in Activity<OrderWidgetAttributes>.activities {
         await activity.end(nil, dismissalPolicy: .immediate)

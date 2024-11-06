@@ -29,7 +29,7 @@ function App(): React.JSX.Element {
           <Button
             title="開始"
             onPress={() =>
-              OrderWidgetModule.startActivity({
+              OrderWidgetModule.startLiveActivity({
                 estimatedFee: 299,
                 carPlate: 'REN-8765', // 可選
                 last4CardNumber: '1234', // 可選

@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-
+#import <BackgroundTasks/BackgroundTasks.h>
 #import <React/RCTBundleURLProvider.h>
 
 @implementation AppDelegate
@@ -17,6 +17,11 @@
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
   return [self bundleURL];
+}
+
+- (void)application:(UIApplication *)application
+performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
+  NSLog(@"BG Beging");
 }
 
 - (NSURL *)bundleURL
