@@ -15,6 +15,8 @@ import {
   Button,
   NativeModules,
   TextInput,
+  TouchableOpacity,
+  Text,
 } from 'react-native';
 
 const {OrderWidgetModule} = NativeModules;
@@ -26,63 +28,67 @@ function App(): React.JSX.Element {
       <StatusBar />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View style={styles.row}>
-          <Button
-            title="開始"
-            onPress={() =>
-              OrderWidgetModule.startLiveActivity({
-                memberId: 'fc52e0df-8eea-434c-af6c-4d6202e82199',
-                accessToken:
-                  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjg3NDk4NTI2LCJwaG9uZSI6IjA5ODczNDU2NzIiLCJ1dWlkIjoiZmM1MmUwZGYtOGVlYS00MzRjLWFmNmMtNGQ2MjAyZTgyMTk5In0.oqow629xA4mm3b2q7yAqjHY0-8-Izu185OWfvhuNiDg',
-                estimatedFee: 299,
-                carPlate: 'REN-8765', // 可選
-                last4CardNumber: '1234', // 可選
-                paymentMethod: 'card', // 可選
-                parkedAt: new Date().getTime(),
-                chargedAt: new Date().getTime(),
-              })
-            }
-          />
-          <Button
-            title="停止"
-            onPress={() => OrderWidgetModule.stopLiveActivity()}
-          />
           <TextInput
             placeholder="金額"
             value={amount.toString()}
             onChangeText={text => setAmount(parseInt(text, 10))}
           />
-          <Button
-            title="更新"
-            onPress={() => {
-              OrderWidgetModule.updateState({
-                estimatedFee: amount,
-                carPlate: 'ABC-123',
-                paymentMethod: '',
-                last4CardNumber: null,
-              });
-            }}
-          />
-          <Button
-            title="JS計時器"
-            onPress={() => {
-              let index = 0;
-              const timer = setInterval(() => {
-                OrderWidgetModule.updateState({
-                  estimatedFee: index++,
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('startLiveActivity');
+                OrderWidgetModule.startLiveActivity({
+                  accessToken:
+                    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjg3NDk4NTI2LCJwaG9uZSI6IjA5ODczNDU2NzIiLCJ1dWlkIjoiZmM1MmUwZGYtOGVlYS00MzRjLWFmNmMtNGQ2MjAyZTgyMTk5In0.oqow629xA4mm3b2q7yAqjHY0-8-Izu185OWfvhuNiDg',
+                  estimatedFee: 299,
+                  carPlate: 'REN-8765', // 可選
+                  last4CardNumber: '1234', // 可選
+                  paymentMethod: 'card', // 可選
+                  parkedAt: new Date().getTime(),
+                  chargedAt: new Date().getTime(),
                 });
-                if (index > 100) {
-                  clearInterval(timer);
-                }
-              }, 1000);
-            }}
-          />
-          <Button
-            title="取得 Push Token"
-            onPress={() => {
-              console.log('syncPushToStartToken');
-              OrderWidgetModule.syncPushToStartToken();
-            }}
-          />
+              }}>
+              <Text>啟動 Live Activity</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('stopLiveActivity');
+                OrderWidgetModule.stopLiveActivity();
+              }}>
+              <Text>停止 Live Activity</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('updateState');
+                OrderWidgetModule.updateState({
+                  estimatedFee: amount,
+                  carPlate: 'ABC-123',
+                  paymentMethod: '',
+                  last4CardNumber: null,
+                });
+              }}>
+              <Text>更新 ContentState</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('syncPushToStartToken');
+                OrderWidgetModule.syncPushToStartToken({
+                  accessToken:
+                    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjg3NDk4NTI2LCJwaG9uZSI6IjA5ODczNDU2NzIiLCJ1dWlkIjoiZmM1MmUwZGYtOGVlYS00MzRjLWFmNmMtNGQ2MjAyZTgyMTk5In0.oqow629xA4mm3b2q7yAqjHY0-8-Izu185OWfvhuNiDg',
+                });
+              }}>
+              <Text>取得 Push to Start Token</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -97,9 +103,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    width: 200,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

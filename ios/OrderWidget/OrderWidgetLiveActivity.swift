@@ -12,7 +12,6 @@ import SwiftUI
 struct OrderWidgetAttributes: ActivityAttributes {
   public struct ContentState: Codable, Hashable {
 
-    var memberId: String = ""
     var memberAccessToken: String = ""
     var parkedAt: Date?
     var chargedAt: Date?
@@ -38,33 +37,34 @@ struct OrderWidgetAttributes: ActivityAttributes {
       guard let startTime = self.parkedAt else {
         return 0;
       }
-      return startTime.timeIntervalSince1970 - Date().timeIntervalSince1970
+      print("park \(startTime)")
+      return Date(timeIntervalSince1970: startTime)
     }
     
-    func getFormattedParkingTime() -> (hours: String, minutes: String, seconds: String) {
-      let interval = abs(getParkingTimeSinceNow())
-      let hours = Int(interval / 3600)
-      let minutes = Int((interval.truncatingRemainder(dividingBy: 3600)) / 60)
-      let seconds = Int(interval.truncatingRemainder(dividingBy: 60))
-      
-      return (String(format: "%02d", hours), String(format: "%02d", minutes), String(format: "%02d", seconds))
-    }
+//    func getFormattedParkingTime() -> (hours: String, minutes: String, seconds: String) {
+//      let interval = abs(getParkingTimeSinceNow())
+//      let hours = Int(interval / 3600)
+//      let minutes = Int((interval.truncatingRemainder(dividingBy: 3600)) / 60)
+//      let seconds = Int(interval.truncatingRemainder(dividingBy: 60))
+//
+//      return (String(format: "%02d", hours), String(format: "%02d", minutes), String(format: "%02d", seconds))
+//    }
     
     func getChargingTimeSinceNow() -> TimeInterval {
       guard let startTime = self.chargedAt else {
         return 0
       }
-      return startTime.timeIntervalSince1970 - Date().timeIntervalSince1970
+      return Date().timeIntervalSince(startTime)
     }
     
-    func getFormattedChargingTime() -> (hours: String, minutes: String, seconds: String) {
-      let interval = abs(getChargingTimeSinceNow())
-      let hours = Int(interval / 3600)
-      let minutes = Int((interval.truncatingRemainder(dividingBy: 3600)) / 60)
-      let seconds = Int(interval.truncatingRemainder(dividingBy: 60))
-      
-      return (String(format: "%02d", hours), String(format: "%02d", minutes), String(format: "%02d", seconds))
-    }
+//    func getFormattedChargingTime() -> (hours: String, minutes: String, seconds: String) {
+//      let interval = abs(getChargingTimeSinceNow())
+//      let hours = Int(interval / 3600)
+//      let minutes = Int((interval.truncatingRemainder(dividingBy: 3600)) / 60)
+//      let seconds = Int(interval.truncatingRemainder(dividingBy: 60))
+//      
+//      return (String(format: "%02d", hours), String(format: "%02d", minutes), String(format: "%02d", seconds))
+//    }
   }
 }
 

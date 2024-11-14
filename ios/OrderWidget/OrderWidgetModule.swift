@@ -30,7 +30,6 @@ class OrderWidgetModule: NSObject {
     if #available(iOS 17.2, *) {
       let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
       let memberAccessToken = (params["accessToken"] as? String) ?? ""
-      
       Task {
         for try await token in Activity<OrderWidgetAttributes>.pushToStartTokenUpdates {
           let tokenParts = token.map { data in
@@ -39,7 +38,7 @@ class OrderWidgetModule: NSObject {
           let token = tokenParts.joined()
           print("Live activity push-to-start token: \(token)")
 
-          await submitPushTokenToServer(token: token, type: "push-to-start", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: nil)
+          await submitPushTokenToServer(token: token, usage: "push-to-start", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: nil)
           
         }
       }
@@ -51,7 +50,6 @@ class OrderWidgetModule: NSObject {
     if #available(iOS 17.2, *) {
       let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
       let memberAccessToken = (params["accessToken"] as? String) ?? ""
-      let activityId = (params["activityId"] as? String) ?? nil
       
       Task {
         guard let currentActivity else { return }
@@ -64,7 +62,7 @@ class OrderWidgetModule: NSObject {
           let token = tokenParts.joined()
           print("Live activity token updated \(token)")
           
-          await submitPushTokenToServer(token: token, type: "push", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: activityId)
+          await submitPushTokenToServer(token: token, usage: "push", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: currentActivity.id)
           
         }
       }
@@ -126,7 +124,7 @@ class OrderWidgetModule: NSObject {
         let token = tokenParts.joined()
         print("Live activity token updated \(token)")
         
-        await submitPushTokenToServer(token: token, type: "push", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: currentActivity.id)
+        await submitPushTokenToServer(token: token, usage: "push", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: currentActivity.id)
         
       }
     }
@@ -162,7 +160,7 @@ class OrderWidgetModule: NSObject {
     if let estimatedFee = state["estimatedFee"] as? Double {
       tmp.estimatedFee = estimatedFee
     }
-    
+     
     if let parkedAt = state["parkedAt"] as? TimeInterval {
       tmp.parkedAt = parseDate(parkedAt)
     }
@@ -185,7 +183,7 @@ class OrderWidgetModule: NSObject {
   
   private func submitPushTokenToServer(
     token: String,
-    type: String,
+    usage: String,
     memberAccessToken: String,
     deviceId: String,
     activityId: String?
@@ -193,9 +191,12 @@ class OrderWidgetModule: NSObject {
     let endpoint = "http://127.0.0.1:8000/api/live_activity_push_tokens"
     
     var body: [String: Any] = [
+      "platform": "ios",
       "token": token,
-      "type": type,
-      "device_id": deviceId
+      "type": "liveactivity",
+      "device_id": deviceId,
+      "usage": usage,
+      "target_id": activityId as Any
     ]
     
     if let activityId = activityId {
@@ -224,14 +225,14 @@ class OrderWidgetModule: NSObject {
       
       switch httpResponse.statusCode {
       case 200:
-        print("✅ Updated \(type) token")
+        print("✅ Updated liveactivity:\(usage) token")
       case 401:
         print("❌ Unauthorized bearer token")
       default:
-        print("❌ Failed to \(type) token.")
+        print("❌ Failed to liveactivity:\(usage) token.")
       }
     } catch {
-      print("❌ Failed to update push to start token: \(error.localizedDescription)")
+      print("❌ Failed to update token: \(error.localizedDescription)")
     }
     
   }
