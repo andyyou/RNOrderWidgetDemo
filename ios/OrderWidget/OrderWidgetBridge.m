@@ -18,5 +18,6 @@ RCT_EXTERN_METHOD(startLiveActivity:(NSDictionary *)params)
 RCT_EXTERN_METHOD(stopLiveActivity)
 RCT_EXTERN_METHOD(updateState:(NSDictionary *)state)
 RCT_EXTERN_METHOD(syncPushToStartToken:(NSDictionary *)params)
+RCT_EXTERN_METHOD(syncPushToken:(NSDictionary *)params)
 
 @end

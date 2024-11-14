@@ -22,15 +22,13 @@ class OrderWidgetModule: NSObject {
   }
   
   private func areActivitiesEnabled() -> Bool {
-    return ActivityAuthorizationInfo().areActivitiesEnabled
+    return ActivityAuthorizationInfo().frequentPushesEnabled
   }
   
   @objc(syncPushToStartToken:)
   func syncPushToStartToken(params: NSDictionary) -> Void {
-    print("Go")
     if #available(iOS 17.2, *) {
       let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
-      var memberId = (params["memberId"] as? String) ?? ""
       let memberAccessToken = (params["accessToken"] as? String) ?? ""
       
       Task {
@@ -39,44 +37,35 @@ class OrderWidgetModule: NSObject {
             String(format: "%02.2hhx", data)
           }
           let token = tokenParts.joined()
-          print("Live activity push to start token updated \(token)")
+          print("Live activity push-to-start token: \(token)")
 
-          // 後端紀錄 pushToken
-          let body: [String: Any] = [
-            "token": token,
-            "type": "push_to_start",
-            "device_id": deviceId,
-          ]
-          guard let url = URL(string: "http://localhost:8000/api/live_activity_push_tokens") else {
-            print("Invalid request URL")
-            return
-          }
-          var request = URLRequest(url: url)
-          request.httpMethod = "POST"
-          request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-          request.setValue("Bearer \(memberAccessToken)", forHTTPHeaderField: "Authorization")
+          await submitPushTokenToServer(token: token, type: "push-to-start", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: nil)
           
-          do {
-            let json = try JSONSerialization.data(withJSONObject: body)
-            request.httpBody = json
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-              print("Invalid response")
-              return
-            }
-            
-            switch httpResponse.statusCode {
-            case 200:
-              print("Updated push to start token")
-            case 401:
-              print("Unauthorized bearer token")
-            default:
-              print("Failed to update push to start token.")
-            }
-          } catch {
-            print("Failed to update push to start token: \(error.localizedDescription)")
+        }
+      }
+    }
+  }
+  
+  @objc(syncPushToken:)
+  func syncPushToken(params: NSDictionary) -> Void {
+    if #available(iOS 17.2, *) {
+      let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
+      let memberAccessToken = (params["accessToken"] as? String) ?? ""
+      let activityId = (params["activityId"] as? String) ?? nil
+      
+      Task {
+        guard let currentActivity else { return }
+        
+        for try await token in currentActivity.pushTokenUpdates {
+          let tokenParts = token.map { data in
+            String(format: "%02.2hhx", data)
           }
+          
+          let token = tokenParts.joined()
+          print("Live activity token updated \(token)")
+          
+          await submitPushTokenToServer(token: token, type: "push", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: activityId)
+          
         }
       }
     }
@@ -92,7 +81,6 @@ class OrderWidgetModule: NSObject {
     }
     
     let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
-    let memberId = (params["memberId"] as? String) ?? ""
     let memberAccessToken = (params["accessToken"] as? String) ?? ""
     let carPlate = (params["carPlate"] as? String) ?? "無車牌"
     let last4CardNumber = (params["last4CardNumber"] as? String) ?? ""
@@ -110,7 +98,6 @@ class OrderWidgetModule: NSObject {
       do {
         let activityAttributes = OrderWidgetAttributes()
         let contentState = OrderWidgetAttributes.ContentState(
-          memberId: memberId,
           memberAccessToken: memberAccessToken,
           parkedAt: parkedAt,
           chargedAt: chargedAt,
@@ -139,43 +126,8 @@ class OrderWidgetModule: NSObject {
         let token = tokenParts.joined()
         print("Live activity token updated \(token)")
         
-        // 後端紀錄 pushToken
-        let body: [String: Any] = [
-          "token": token,
-          "type": "push",
-          "device_id": deviceId,
-          "activity_id": currentActivity.id,
-        ]
-        guard let url = URL(string: "http://localhost:8000/api/live_activity_push_tokens") else {
-          print("Invalid request URL")
-          return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(memberAccessToken)", forHTTPHeaderField: "Authorization")
+        await submitPushTokenToServer(token: token, type: "push", memberAccessToken: memberAccessToken, deviceId: deviceId, activityId: currentActivity.id)
         
-        do {
-          let json = try JSONSerialization.data(withJSONObject: body)
-          request.httpBody = json
-          let (data, response) = try await URLSession.shared.data(for: request)
-          
-          guard let httpResponse = response as? HTTPURLResponse else {
-            print("Invalid response")
-            return
-          }
-          
-          switch httpResponse.statusCode {
-          case 200:
-            print("Updated push token")
-          case 401:
-            print("Unauthorized bearer token")
-          default:
-            print("Failed to update push token.")
-          }
-        } catch {
-          print("Failed to update token: \(error.localizedDescription)")
-        }
       }
     }
     
@@ -229,5 +181,58 @@ class OrderWidgetModule: NSObject {
         )
       )
     }
+  }
+  
+  private func submitPushTokenToServer(
+    token: String,
+    type: String,
+    memberAccessToken: String,
+    deviceId: String,
+    activityId: String?
+  ) async {
+    let endpoint = "http://127.0.0.1:8000/api/live_activity_push_tokens"
+    
+    var body: [String: Any] = [
+      "token": token,
+      "type": type,
+      "device_id": deviceId
+    ]
+    
+    if let activityId = activityId {
+      body["activity_id"] = activityId
+    }
+    
+    guard let url = URL(string: endpoint) else {
+      print("Invalid request URL")
+      return
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.setValue("Bearer \(memberAccessToken)", forHTTPHeaderField: "Authorization")
+    print("Make request \(request)")
+    do {
+      let json = try JSONSerialization.data(withJSONObject: body)
+      request.httpBody = json
+      let (_, response) = try await URLSession.shared.data(for: request)
+      
+      guard let httpResponse = response as? HTTPURLResponse else {
+        print("Invalid response")
+        return
+      }
+      
+      switch httpResponse.statusCode {
+      case 200:
+        print("✅ Updated \(type) token")
+      case 401:
+        print("❌ Unauthorized bearer token")
+      default:
+        print("❌ Failed to \(type) token.")
+      }
+    } catch {
+      print("❌ Failed to update push to start token: \(error.localizedDescription)")
+    }
+    
   }
 }
