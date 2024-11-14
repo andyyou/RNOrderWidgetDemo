@@ -1,6 +1,8 @@
 #import "AppDelegate.h"
 #import <BackgroundTasks/BackgroundTasks.h>
 #import <React/RCTBundleURLProvider.h>
+#import "OrderDemo-Swift.h"
+#import <UserNotifications/UserNotifications.h>
 
 @implementation AppDelegate
 
@@ -10,6 +12,16 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
+  
+  [UNUserNotificationCenter.currentNotificationCenter
+     requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge)
+     completionHandler:^(BOOL granted, NSError * _Nullable error) {
+       if (granted) {
+         dispatch_async(dispatch_get_main_queue(), ^{
+           [application registerForRemoteNotifications];
+         });
+       }
+   }];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
@@ -19,10 +31,6 @@
   return [self bundleURL];
 }
 
-- (void)application:(UIApplication *)application
-performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-  NSLog(@"BG Beging");
-}
 
 - (NSURL *)bundleURL
 {

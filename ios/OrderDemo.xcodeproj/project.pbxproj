@@ -12,6 +12,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		39AB7F2E2CDDC313000344C0 /* PushToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AB7F2D2CDDC313000344C0 /* PushToken.swift */; };
+		39AB7F2F2CDDC313000344C0 /* PushToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AB7F2D2CDDC313000344C0 /* PushToken.swift */; };
 		39B27D122CCB303B00CB0B5D /* OrderWidgetModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B27D102CCB303B00CB0B5D /* OrderWidgetModule.swift */; };
 		39B27D142CCB312700CB0B5D /* OrderWidgetBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 39B27D132CCB312700CB0B5D /* OrderWidgetBridge.m */; };
 		39B27D152CCB358400CB0B5D /* OrderWidgetModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B27D102CCB303B00CB0B5D /* OrderWidgetModule.swift */; };
@@ -70,9 +72,11 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = OrderDemo/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = OrderDemo/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-OrderDemo-OrderDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OrderDemo-OrderDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		39AB7F2D2CDDC313000344C0 /* PushToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushToken.swift; sourceTree = "<group>"; };
 		39B27D0F2CCB303B00CB0B5D /* OrderDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OrderDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		39B27D102CCB303B00CB0B5D /* OrderWidgetModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderWidgetModule.swift; sourceTree = "<group>"; };
 		39B27D132CCB312700CB0B5D /* OrderWidgetBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrderWidgetBridge.m; sourceTree = "<group>"; };
+		39B89A012CDB4BE30028BF47 /* OrderDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = OrderDemo.entitlements; path = OrderDemo/OrderDemo.entitlements; sourceTree = "<group>"; };
 		39E6FB412CCA44B200F980F0 /* OrderWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OrderWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		39E6FB422CCA44B200F980F0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		39E6FB442CCA44B200F980F0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -138,6 +142,7 @@
 		13B07FAE1A68108700A75B9A /* OrderDemo */ = {
 			isa = PBXGroup;
 			children = (
+				39B89A012CDB4BE30028BF47 /* OrderDemo.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -161,9 +166,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		39AB7F2C2CDDC2FB000344C0 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				39AB7F2D2CDDC313000344C0 /* PushToken.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		39E6FB462CCA44B200F980F0 /* OrderWidget */ = {
 			isa = PBXGroup;
 			children = (
+				39AB7F2C2CDDC2FB000344C0 /* Model */,
 				39E6FB472CCA44B200F980F0 /* OrderWidgetBundle.swift */,
 				39E6FB492CCA44B200F980F0 /* OrderWidgetLiveActivity.swift */,
 				39E6FB4D2CCA44B300F980F0 /* Assets.xcassets */,
@@ -501,6 +515,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				39B27D142CCB312700CB0B5D /* OrderWidgetBridge.m in Sources */,
+				39AB7F2E2CDDC313000344C0 /* PushToken.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,6 +526,7 @@
 				39B27D122CCB303B00CB0B5D /* OrderWidgetModule.swift in Sources */,
 				39E6FB482CCA44B200F980F0 /* OrderWidgetBundle.swift in Sources */,
 				39E6FB4A2CCA44B200F980F0 /* OrderWidgetLiveActivity.swift in Sources */,
+				39AB7F2F2CDDC313000344C0 /* PushToken.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,6 +606,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = OrderDemo/OrderDemo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3A6A49P89Q;
 				ENABLE_BITCODE = NO;
@@ -621,6 +638,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = OrderDemo/OrderDemo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3A6A49P89Q;
 				INFOPLIST_FILE = OrderDemo/Info.plist;
@@ -658,6 +676,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 3A6A49P89Q;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -701,6 +720,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 3A6A49P89Q;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;

@@ -11,6 +11,9 @@ import SwiftUI
 
 struct OrderWidgetAttributes: ActivityAttributes {
   public struct ContentState: Codable, Hashable {
+
+    var memberId: String = ""
+    var memberAccessToken: String = ""
     var parkedAt: Date?
     var chargedAt: Date?
     var estimatedFee: Double?
@@ -65,10 +68,12 @@ struct OrderWidgetAttributes: ActivityAttributes {
   }
 }
 
-struct OrderWidgetLiveActivity: Widget {
+struct OrderWidgetLiveActivity: Widget {  
   var body: some WidgetConfiguration {
     ActivityConfiguration(for: OrderWidgetAttributes.self) { context in
       // Lock screen/banner UI
+      
+      
       VStack(spacing: 8) {
         HStack(alignment: .top) {
           HStack {
@@ -210,11 +215,11 @@ struct OrderWidgetLiveActivity: Widget {
         DynamicIslandExpandedRegion(.bottom) {
           // 上部區塊
           VStack(spacing: 0) {
-            HStack {
+            HStack(alignment: .bottom) {
               HStack(alignment: .bottom) {
                 Text("\(context.state.carPlate)")
                   .font(.system(size: 18, weight: .bold))
-              }
+              }.padding(.bottom, 4)
               
               Spacer()
               
@@ -226,7 +231,7 @@ struct OrderWidgetLiveActivity: Widget {
                   ),
                   style: .timer
                 )
-                .font(.system(size: 24, weight: .bold))
+                .font(.system(size: 30, weight: .bold))
                 .multilineTextAlignment(.trailing)
                 .monospacedDigit()
               } else if (context.state.isParking()) {
@@ -236,13 +241,12 @@ struct OrderWidgetLiveActivity: Widget {
                   ),
                   style: .timer
                 )
-                .font(.system(size: 24, weight: .bold))
+                .font(.system(size: 30, weight: .bold))
                 .multilineTextAlignment(.trailing)
                 .monospacedDigit()
               }
               
             }
-            .padding(.top, 16)
             .padding(.horizontal, 16)
           }
           
@@ -316,6 +320,7 @@ struct OrderWidgetLiveActivity: Widget {
             style: .timer
           ).frame(maxWidth: 40, alignment: .trailing)
             .monospacedDigit()
+          
         } else if (context.state.isParking()) {
           Text(
             Date(

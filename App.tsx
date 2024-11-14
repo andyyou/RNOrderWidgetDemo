@@ -30,12 +30,15 @@ function App(): React.JSX.Element {
             title="開始"
             onPress={() =>
               OrderWidgetModule.startLiveActivity({
+                memberId: 'fc52e0df-8eea-434c-af6c-4d6202e82199',
+                accessToken:
+                  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjg3NDk4NTI2LCJwaG9uZSI6IjA5ODczNDU2NzIiLCJ1dWlkIjoiZmM1MmUwZGYtOGVlYS00MzRjLWFmNmMtNGQ2MjAyZTgyMTk5In0.oqow629xA4mm3b2q7yAqjHY0-8-Izu185OWfvhuNiDg',
                 estimatedFee: 299,
                 carPlate: 'REN-8765', // 可選
                 last4CardNumber: '1234', // 可選
                 paymentMethod: 'card', // 可選
                 parkedAt: new Date().getTime(),
-                chargedAt: null,
+                chargedAt: new Date().getTime(),
               })
             }
           />
@@ -71,6 +74,13 @@ function App(): React.JSX.Element {
                   clearInterval(timer);
                 }
               }, 1000);
+            }}
+          />
+          <Button
+            title="取得 Push Token"
+            onPress={() => {
+              console.log('syncPushToStartToken');
+              OrderWidgetModule.syncPushToStartToken();
             }}
           />
         </View>
